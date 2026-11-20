@@ -26,6 +26,12 @@ export class UsersRepository {
         "SELECT * FROM users WHERE email = $email")
         .get({$email: email.trim().toLowerCase()});
   }
-  
+  public create(title:string, email: string, password: string): UserType|null{
+    return this.database
+      .querty<UserType, {$title: String; $email: String; $password: string }>(`
+        INSERT INTO users (title, email, password)
+          Values ($title, $email, $password) RETURN id, title, email
+      `)
+  }
 }
 

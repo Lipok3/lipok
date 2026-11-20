@@ -14,7 +14,9 @@ export class ApplicationModule {
   }
 
   public init(): ApplicationModule {
-    this.users.init();
+    const {users}= this.users.init();
+    
+    this.server.route('/api/users', users);
 
     return this;
   }

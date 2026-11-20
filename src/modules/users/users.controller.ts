@@ -11,18 +11,33 @@ export class UsersController {
       .get('/', this.findAll.bind(this))
   }
 
-  public async findAll(c: Context): Promise<
-    TypedResponse<ApplicationResult<UserType[]>>
-  > {
+  public async findAll(
+    c: Context<ApplicationEnviroment>
+  ): Promise<TypedResponse<ApplicationResult<UserType[]>>>{
     return c.json({
       success: true,
-      data: [
-        {
-          id: 1,
-          title: "TEST",
-          email: "hello@nke.ru"
-        }
-      ]
-    })
+      data: this.repository.findAll(),
+    });
+  }
+  public async findById(
+    c: Context<
+      ApplicationEnvironment, 
+      "/:id", 
+      {out: { param: IDParamType } }
+    >
+  ): Promise<TypedResponse<ApplicationResult<UserType>>> {
+    const { id } = c.req.valid("param");
+    const user = this.repository.findById(id); 
+    if ( !user) {
+      return c.json({ success: false, error: "User not found" }, 404);
+    }
+    return c.json({
+     success: true,
+     data: user,
+   });
+  
   }
 }
+
+  
+
